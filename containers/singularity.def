@@ -1,0 +1,59 @@
+Bootstrap: docker
+From: pytorch/pytorch:latest
+
+%post
+    # Update and install system dependencies
+    apt-get update && apt-get install -y \
+        python3-pip \
+        python3-dev \
+        gcc \
+        g++ \
+        git \
+        wget \
+        libgl1-mesa-glx \
+        libglib2.0-0
+
+    # Install Python packages
+    pip3 install --upgrade pip
+    pip3 install \
+        torch \
+        torchvision \
+        torchaudio \
+        scikit-learn \
+        pandas \
+        matplotlib \
+        seaborn \
+        numpy \
+        scipy \
+        tqdm \
+        wandb \
+        einops
+
+    # Clean up
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export LC_ALL=C
+    export PATH="/usr/local/bin:$PATH"
+    export PYTHONPATH="/usr/local/lib/python3.8/site-packages:$PYTHONPATH"
+
+%runscript
+    python3 "$@"
+
+%labels
+    Author https://github.com/mmaalvarez
+    Version v1.0
+
+%help
+    This container provides an environment for 1) running DNA sequence classification
+    using PyTorch and related libraries, and 2) extracting embeddings
+    
+    The container includes:
+    - PyTorch with CUDA support
+    - scikit-learn
+    - pandas
+    - matplotlib
+    - seaborn
+    - numpy
+    - other required Python packages
