@@ -92,3 +92,5 @@ so the first fully connected layer (fc1), after the convolution layers, is the "
 
 -- Download the .sif container from dockerhub in the containers/ folder:
 `singularity pull docker://mmalvareza/embeddings_mutsig:latest ./containers`
+or 
+`docker pull mmalvareza/embeddings_mutsig:latest ./containers`

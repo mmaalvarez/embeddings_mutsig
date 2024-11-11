@@ -1,27 +1,38 @@
+# ---
+# jupyter:
+#   jupytext:
+#     cell_metadata_filter: -all
+#     formats: ipynb,py:light
+#     text_representation:
+#       extension: .py
+#       format_name: light
+#       format_version: '1.5'
+#       jupytext_version: 1.14.4
+# ---
+
 # data.py
 from model import one_hot_encode_dna, encode_labels
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from sklearn.metrics import roc_auc_score, confusion_matrix
-import pandas as pd
-from matplotlib import pyplot as plt
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import label_binarize
-from torch.utils.data import Dataset, DataLoader
-import numpy as np
-from itertools import combinations
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-import seaborn as sns
-from torch.utils.data import WeightedRandomSampler
+from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+from sklearn.metrics import roc_auc_score, confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.preprocessing import LabelEncoder, label_binarize
 from sklearn.utils.class_weight import compute_class_weight
+import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
+from itertools import combinations
+import seaborn as sns
+import wandb
 
 
 def load_data(path, device, batch_size):
+
   # Read data
-  #Train
   train_df = pd.read_csv(path + "all_cancertypes_df_train")
+
+  #Train
   train_sequences = train_df['seq'].tolist()
   train_labels = train_df['label'].tolist()
   
@@ -46,12 +57,11 @@ def load_data(path, device, batch_size):
   train_labels_series = pd.Series(train_labels)
   label_mapping = {label: idx for idx, label in enumerate(train_labels_series.unique())}
   
- # Encode labels for all data splits
+  # Encode labels for all data splits
   train_labels = torch.tensor([label_mapping[label] for label in train_labels], dtype=torch.long).to(device)
   val_labels = torch.tensor([label_mapping[label] for label in val_labels], dtype=torch.long).to(device)
   test_labels = torch.tensor([label_mapping[label] for label in test_labels], dtype=torch.long).to(device)
 
-  
   # One-hot encode the sequences
   train_encoded_sequences = one_hot_encode_dna(train_sequences).to(device)  # Move sequences to GPU
   val_encoded_sequences = one_hot_encode_dna(val_sequences).to(device)
