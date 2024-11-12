@@ -31,30 +31,30 @@ import seaborn as sns
 import wandb
 
 
-def load_data(path, device, batch_size):
+def load_data(path, training_set, validation_set, testing_set, all_sets, device, batch_size):
 
   # Read data
-  train_df = pd.read_csv(path + "all_cancertypes_df_train")
+  train_df = pd.read_csv(path + training_set)
 
   #Train
   train_sequences = train_df['seq'].tolist()
   train_labels = train_df['label'].tolist()
   
   #Validate
-  val_df = pd.read_csv(path + "all_cancertypes_df_validate")
+  val_df = pd.read_csv(path + validation_set)
   val_sequences = val_df['seq'].tolist()
   val_labels = val_df['label'].tolist()
   val_labels_og = val_df['label'].tolist()
   
   #Test
-  test_df = pd.read_csv(path + "all_cancertypes_df_test")
+  test_df = pd.read_csv(path + testing_set)
   test_sequences = test_df['seq'].tolist()
   test_sequences_og = test_df['seq'].tolist()
   test_labels = test_df['label'].tolist()
   test_labels_og = test_df['label'].tolist()
   
   #All
-  all_df = pd.read_csv(path + "all_cancertypes_df_all")
+  all_df = pd.read_csv(path + all_sets)
   all_sequences = all_df['seq'].tolist()
   all_labels = all_df['label'].tolist()
   
