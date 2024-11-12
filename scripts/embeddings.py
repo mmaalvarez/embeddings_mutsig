@@ -2,12 +2,16 @@
 # jupyter:
 #   jupytext:
 #     cell_metadata_filter: -all
-#     formats: ipynb,py:light
+#     formats: ipynb,py
 #     text_representation:
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
 #       jupytext_version: 1.14.4
+#   kernelspec:
+#     display_name: embeddings_mutsig
+#     language: python
+#     name: embeddings_mutsig
 # ---
 
 # embeddings.py
@@ -73,7 +77,7 @@ def map_encoded_to_original_labels(encoded_labels, label_mapping):
     if isinstance(encoded_labels, list):
         encoded_labels = np.array(encoded_labels)
 
-    if isinstance(encoded_labels, torch.Tensor):
+    if torch.is_tensor(encoded_labels):
         encoded_labels = encoded_labels.cpu().numpy()  # Convert tensor to numpy
 
     # Create a reverse mapping from encoded values to original labels
@@ -133,14 +137,16 @@ def save_all_embeddings_probs(model, labels, sequences, label_mapping, output_fi
     print(f'Type of probabilities: {type(probabilities)}')
 
     # Convert probabilities to a NumPy array if it's a tensor
-    if isinstance(probabilities, torch.Tensor):
+    if torch.is_tensor(probabilities):
         probabilities = probabilities.cpu().numpy()
     
     # Get max probabilities for each sequence
     
-    max_probabilities = numpy.max(probabilities, axis=1)  # Get max prob for each sequence
+    max_probabilities = np.max(probabilities, axis=1)  # Get max prob for each sequence
 
     # Now save the embeddings, true labels, predicted labels, and max probabilities
     save_embeddings_csv_probs(sequences, labels, predicted_labels, embeddings, max_probabilities, label_mapping, output_file)
 
     print("SAVE ALL EMBEDDINGS FUNCTION CALLED CSV FUNCTION")
+
+

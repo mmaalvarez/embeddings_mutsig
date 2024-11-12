@@ -2,12 +2,16 @@
 # jupyter:
 #   jupytext:
 #     cell_metadata_filter: -all
-#     formats: ipynb,py:light
+#     formats: ipynb,py
 #     text_representation:
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
 #       jupytext_version: 1.14.4
+#   kernelspec:
+#     display_name: embeddings_mutsig
+#     language: python
+#     name: embeddings_mutsig
 # ---
 
 # data.py
@@ -123,3 +127,5 @@ def load_data(path, device, batch_size):
   )
   
   return train_loader, val_loader, test_loader, test_labels, test_sequences_og, class_weights_tensor, label_mapping
+
+

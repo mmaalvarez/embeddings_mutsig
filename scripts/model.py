@@ -2,12 +2,16 @@
 # jupyter:
 #   jupytext:
 #     cell_metadata_filter: -all
-#     formats: ipynb,py:light
+#     formats: ipynb,py
 #     text_representation:
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
 #       jupytext_version: 1.14.4
+#   kernelspec:
+#     display_name: embeddings_mutsig
+#     language: python
+#     name: embeddings_mutsig
 # ---
 
 # model.py
@@ -222,3 +226,5 @@ def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, cl
     #plt.show()
 
     return model
+
+
