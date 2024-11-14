@@ -1,31 +1,51 @@
-process process1 {
+process training {
 
     label 'short_low'
     
+    // save output
+    publishDir "$PWD/embeddings/CNN_models/", pattern: 'best_model_*.pth', mode: 'copy'
+    publishDir "$PWD/embeddings/loss_auc_curves/", pattern: 'loss_and_accuracy_curve_2conv_*.png', mode: 'copy'
+    publishDir "$PWD/embeddings/saved_embeddings_myCNN/", pattern: 'test_embeddings_probs_conv1_*.csv', mode: 'copy'    
+
     input:
-    val(input_file)
-    path(sample_list)
+    val(work_dir)
+    val(files_dir)
+    val(training_set)
+    val(validation_set)
+    val(testing_set)
+    val(all_sets)
+    tuple val(batch_size),
+          val(learning_rate),
+          val(patience),
+          val(fc1_neurons),
+          val(fc2_neurons),
+          val(dropout1_rate),
+          val(dropout2_rate),
+          val(kernel_size1),
+          val(kernel_size2),
+          val(kernel_size3)
 
     output:
-    path('chr*_preprocessed')
+    path('best_model_*.pth'), emit: CNN_models
+    path('loss_and_accuracy_curve_2conv_*.png'), emit: loss_auc_curves
+    path('test_embeddings_probs_conv1_*.csv'), emit: saved_embeddings_myCNN
 
     """
-    python "${System.env.work_dir}"/scripts/XXXX.py ${input_file} ${sample_list}
-    """
-}
-
-process process2 {
-
-    label 'short_low'
-    
-    input:
-    val(input_file)
-    path(sample_list)
-
-    output:
-    path('chr*_preprocessed')
-
-    """
-    python "${System.env.work_dir}"/scripts/XXX.py ${input_file} ${sample_list}
+    python "${System.env.work_dir}"/scripts/main.py ${work_dir} \
+                                                    ${files_dir} \
+                                                    ${training_set} \
+                                                    ${validation_set} \
+                                                    ${testing_set} \
+                                                    ${all_sets} \
+                                                    ${batch_size} \
+                                                    ${learning_rate} \
+                                                    ${patience} \
+                                                    ${fc1_neurons} \
+                                                    ${fc2_neurons} \
+                                                    ${dropout1_rate} \
+                                                    ${dropout2_rate} \
+                                                    ${kernel_size1} \
+                                                    ${kernel_size2} \
+                                                    ${kernel_size3}
     """
 }

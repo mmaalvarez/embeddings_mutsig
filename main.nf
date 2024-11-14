@@ -3,32 +3,36 @@
 nextflow.enable.dsl=2
 
 // Import all processes from modules
-include { process1 } from './modules/nn_training.nf'
-include { process2 } from './modules/nn_training.nf'
+include { training } from './modules/nn_training.nf'
 
 workflow {
 
-    // Create channels
-    input_files_ch = Channel
-        .fromPath(params.input_files_list)
-        .splitCsv(header:false)
+    // Create channels with hyperparameter ranges
+
+    batch_size = Channel.from(params.batch_size.toString().tokenize(','))
+    learning_rate = Channel.from(params.learning_rate.toString().tokenize(','))
+    patience = Channel.from(params.patience.toString().tokenize(','))
+    fc1_neurons = Channel.from(params.fc1_neurons.toString().tokenize(','))
+    fc2_neurons = Channel.from(params.fc2_neurons.toString().tokenize(','))
+    dropout1_rate = Channel.from(params.dropout1_rate.toString().tokenize(','))
+    dropout2_rate = Channel.from(params.dropout2_rate.toString().tokenize(','))
+    kernel_size1 = Channel.from(params.kernel_size1.toString().tokenize(','))
+    kernel_size2 = Channel.from(params.kernel_size2.toString().tokenize(','))
+    kernel_size3 = Channel.from(params.kernel_size3.toString().tokenize(','))
+
+    combined_hyperparameters = batch_size.combine(learning_rate).combine(patience).combine(fc1_neurons).combine(fc2_neurons).combine(dropout1_rate).combine(dropout2_rate).combine(kernel_size1).combine(kernel_size2).combine(kernel_size3)
 
     // Run processes
     
-    process1(
-        input_files_ch,
-        file(params.sample_list)
+    training(
+        params.work_dir,
+        params.files_dir,
+        params.training_set,
+        params.validation_set,
+        params.testing_set,
+        params.all_sets,
+        combined_hyperparameters
     )
-    
-    process2(
-        params.bcftools_command,
-        process1.out
-    )
-
-    // Collect output
-    results.out
-        .collectFile(name: 'res/results.tsv', keepHeader: true)
-        .view { "Finished! Results saved in res/results.tsv"}
 }
 
 // Error handling

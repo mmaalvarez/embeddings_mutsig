@@ -30,6 +30,12 @@ else
 fi
 
 
+# update scripts
+jupytext --set-formats ipynb,py $PWD/scripts/model.py --sync
+jupytext --set-formats ipynb,py $PWD/scripts/data.py --sync
+jupytext --set-formats ipynb,py $PWD/scripts/embeddings.py --sync
+jupytext --set-formats ipynb,py $PWD/scripts/main.py --sync
+
 mkdir -p log/
 
 nextflow -log $PWD/log/nextflow.log run main.nf -resume -with-dag dag_flowchart.svg

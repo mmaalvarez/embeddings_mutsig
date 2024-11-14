@@ -85,6 +85,17 @@ if 'ipykernel' in sys.modules:
     kernel_size2 = 3
     kernel_size3 = 3
     
+    # also create output folders
+    
+    if not os.path.exists(f'{work_dir}/embeddings/CNN_models/'):
+        os.makedirs(f'{work_dir}/embeddings/CNN_models/')
+
+    if not os.path.exists(f'{work_dir}/embeddings/loss_auc_curves/'):
+        os.makedirs(f'{work_dir}/embeddings/loss_auc_curves/')
+    
+    if not os.path.exists(f'{work_dir}/embeddings/saved_embeddings_myCNN/'):
+        os.makedirs(f'{work_dir}/embeddings/saved_embeddings_myCNN/')
+    
 else:
     # otherwise, load arguments
     
@@ -139,18 +150,26 @@ n_ct = len(label_mapping)
 
 
 # +
-if not os.path.exists(f'{work_dir}/embeddings/CNN_models/'):
-    os.makedirs(f'{work_dir}/embeddings/CNN_models/')
-
-if not os.path.exists(f'{work_dir}/embeddings/loss_auc_curves/'):
-    os.makedirs(f'{work_dir}/embeddings/loss_auc_curves/')
-    
-model_path = f'{work_dir}/embeddings/CNN_models/best_model_test.pth'
+model_path = f'{work_dir}/embeddings/CNN_models/best_model_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.pth'
 
 model = CNN_DNAClassifier(config, n_ct).to(device)
 
 # Train the model normally (NO WANDB SWEEPS)
-model = train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, class_weights_tensor, device, wandb=False)
+model = train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, class_weights_tensor, device, wandb=False,
+                    training_set, 
+                    validation_set, 
+                    testing_set, 
+                    all_sets,
+                    batch_size,
+                    learning_rate,
+                    patience,
+                    fc1_neurons,
+                    fc2_neurons,
+                    dropout1_rate,
+                    dropout2_rate,
+                    kernel_size1,
+                    kernel_size2,
+                    kernel_size3)
 
 print("Finished training")
 
@@ -165,10 +184,7 @@ model.load_state_dict(torch.load(model_path))
 # +
 # Save embeddings
 
-if not os.path.exists(f'{work_dir}/embeddings/saved_embeddings_myCNN/'):
-    os.makedirs(f'{work_dir}/embeddings/saved_embeddings_myCNN/')
-    
-save_all_embeddings_probs(model, test_labels, test_sequences_og, label_mapping, f'{work_dir}/embeddings/saved_embeddings_myCNN/test_embeddings_probs_conv1.csv')
+save_all_embeddings_probs(model, test_labels, test_sequences_og, label_mapping, f'{work_dir}/embeddings/saved_embeddings_myCNN/test_embeddings_probs_conv1_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.csv')
 # -
 
 
