@@ -20,7 +20,16 @@ workflow {
     kernel_size2 = Channel.from(params.kernel_size2.toString().tokenize(','))
     kernel_size3 = Channel.from(params.kernel_size3.toString().tokenize(','))
 
-    combined_hyperparameters = batch_size.combine(learning_rate).combine(patience).combine(fc1_neurons).combine(fc2_neurons).combine(dropout1_rate).combine(dropout2_rate).combine(kernel_size1).combine(kernel_size2).combine(kernel_size3)
+    combined_hyperparameters = batch_size
+        .combine(learning_rate)
+        .combine(patience)
+        .combine(fc1_neurons)
+        .combine(fc2_neurons)
+        .combine(dropout1_rate)
+        .combine(dropout2_rate)
+        .combine(kernel_size1)
+        .combine(kernel_size2)
+        .combine(kernel_size3)
 
     // Run processes
     

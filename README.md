@@ -59,3 +59,5 @@ singularity pull docker://mmalvareza/embeddings_mutsig:latest ./containers
 # Using Docker
 docker pull mmalvareza/embeddings_mutsig:latest ./containers
 ```
+
+- The Nextflow version tested is 24.10.0.5928
