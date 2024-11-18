@@ -33,7 +33,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from itertools import combinations
 import seaborn as sns
-import wandb
 from types import SimpleNamespace
 
 
@@ -106,16 +105,16 @@ else:
     validation_set = args.validation_set
     testing_set = args.testing_set
     all_sets = args.all_sets
-    batch_size = args.batch_size
-    learning_rate = args.learning_rate
-    patience = args.patience
-    fc1_neurons = args.fc1_neurons
-    fc2_neurons = args.fc2_neurons
-    dropout1_rate = args.dropout1_rate
-    dropout2_rate = args.dropout2_rate
-    kernel_size1 = args.kernel_size1
-    kernel_size2 = args.kernel_size2
-    kernel_size3 = args.kernel_size3
+    batch_size = int(args.batch_size)
+    learning_rate = float(args.learning_rate)
+    patience = int(args.patience)
+    fc1_neurons = int(args.fc1_neurons)
+    fc2_neurons = int(args.fc2_neurons)
+    dropout1_rate = float(args.dropout1_rate)
+    dropout2_rate = float(args.dropout2_rate)
+    kernel_size1 = int(args.kernel_size1)
+    kernel_size2 = int(args.kernel_size2)
+    kernel_size3 = int(args.kernel_size3)
 
     
 # input files path
@@ -150,12 +149,12 @@ n_ct = len(label_mapping)
 
 
 # +
-model_path = f'{work_dir}/embeddings/CNN_models/best_model_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.pth'
+model_path = f'{work_dir}/embeddings/CNN_models/best_model_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.pth'
 
 model = CNN_DNAClassifier(config, n_ct).to(device)
 
 # Train the model normally (NO WANDB SWEEPS)
-model = train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, class_weights_tensor, device, wandb=False,
+model = train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, class_weights_tensor, device,
                     training_set, 
                     validation_set, 
                     testing_set, 
@@ -184,7 +183,7 @@ model.load_state_dict(torch.load(model_path))
 # +
 # Save embeddings
 
-save_all_embeddings_probs(model, test_labels, test_sequences_og, label_mapping, f'{work_dir}/embeddings/saved_embeddings_myCNN/test_embeddings_probs_conv1_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.csv')
+save_all_embeddings_probs(model, test_labels, test_sequences_og, label_mapping, f'{work_dir}/embeddings/saved_embeddings_myCNN/test_embeddings_probs_conv1_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.csv')
 # -
 
 

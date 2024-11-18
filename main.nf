@@ -3,22 +3,22 @@
 nextflow.enable.dsl=2
 
 // Import all processes from modules
-include { training } from './modules/nn_training.nf'
+include { nn_training } from './modules/nn_training'
 
 workflow {
 
     // Create channels with hyperparameter ranges
 
-    batch_size = Channel.from(params.batch_size.toString().tokenize(','))
-    learning_rate = Channel.from(params.learning_rate.toString().tokenize(','))
-    patience = Channel.from(params.patience.toString().tokenize(','))
-    fc1_neurons = Channel.from(params.fc1_neurons.toString().tokenize(','))
-    fc2_neurons = Channel.from(params.fc2_neurons.toString().tokenize(','))
-    dropout1_rate = Channel.from(params.dropout1_rate.toString().tokenize(','))
-    dropout2_rate = Channel.from(params.dropout2_rate.toString().tokenize(','))
-    kernel_size1 = Channel.from(params.kernel_size1.toString().tokenize(','))
-    kernel_size2 = Channel.from(params.kernel_size2.toString().tokenize(','))
-    kernel_size3 = Channel.from(params.kernel_size3.toString().tokenize(','))
+    batch_size = Channel.from(params.batch_size.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    learning_rate = Channel.from(params.learning_rate.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    patience = Channel.from(params.patience.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    fc1_neurons = Channel.from(params.fc1_neurons.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    fc2_neurons = Channel.from(params.fc2_neurons.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    dropout1_rate = Channel.from(params.dropout1_rate.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    dropout2_rate = Channel.from(params.dropout2_rate.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    kernel_size1 = Channel.from(params.kernel_size1.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    kernel_size2 = Channel.from(params.kernel_size2.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    kernel_size3 = Channel.from(params.kernel_size3.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
 
     combined_hyperparameters = batch_size
         .combine(learning_rate)
@@ -33,7 +33,7 @@ workflow {
 
     // Run processes
     
-    training(
+    nn_training(
         params.work_dir,
         params.files_dir,
         params.training_set,
@@ -44,12 +44,10 @@ workflow {
     )
 }
 
-// Error handling
 workflow.onError {
     println "Pipeline execution stopped with error: ${workflow.errorMessage}"
 }
 
-// Completion handler
 workflow.onComplete {
     println "Pipeline completed at: $workflow.complete"
     println "Execution status: ${ workflow.success ? 'SUCCESS' : 'FAILED' }"

@@ -30,7 +30,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from itertools import combinations
 import seaborn as sns
-import wandb
 import einops
 from einops import rearrange
 from einops.layers.torch import Rearrange

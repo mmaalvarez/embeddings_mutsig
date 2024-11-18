@@ -27,7 +27,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from itertools import combinations
 import seaborn as sns
-import wandb
 
 
 # Function to one-hot encode DNA sequences
@@ -98,7 +97,8 @@ def calculate_accuracy(outputs, labels):
     return correct / labels.size(0)
 
 
-def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, class_weights_tensor, device, wandb,
+# +
+def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, class_weights_tensor, device,
                 training_set, 
                 validation_set, 
                 testing_set, 
@@ -184,15 +184,15 @@ def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, cl
         val_losses.append(avg_val_loss)
         val_accuracies.append(avg_val_accuracy)
 
-        # Log metrics to wandb
-        if wandb == True:
-            wandb.log({
-                'epoch': epoch + 1,
-                'train_loss': avg_train_loss,
-                'val_loss': avg_val_loss,
-                'train_accuracy': avg_train_accuracy,
-                'val_accuracy': avg_val_accuracy
-            })
+#        # Log metrics to wandb
+#         if wandb == True:
+#             wandb.log({
+#                 'epoch': epoch + 1,
+#                 'train_loss': avg_train_loss,
+#                 'val_loss': avg_val_loss,
+#                 'train_accuracy': avg_train_accuracy,
+#                 'val_accuracy': avg_val_accuracy
+#             })
 
         # Print train and validation loss/accuracy for the current epoch
         print(f'Epoch [{epoch + 1}/500], Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}, '
@@ -240,5 +240,6 @@ def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, cl
     #plt.show()
 
     return model
+# -
 
 

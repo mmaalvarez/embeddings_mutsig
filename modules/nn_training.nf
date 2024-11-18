@@ -1,4 +1,4 @@
-process training {
+process nn_training {
 
     label 'short_low'
     
@@ -31,21 +31,21 @@ process training {
     path('test_embeddings_probs_conv1_*.csv'), emit: saved_embeddings_myCNN
 
     """
-    python "${System.env.work_dir}"/scripts/main.py ${work_dir} \
-                                                    ${files_dir} \
-                                                    ${training_set} \
-                                                    ${validation_set} \
-                                                    ${testing_set} \
-                                                    ${all_sets} \
-                                                    ${batch_size} \
-                                                    ${learning_rate} \
-                                                    ${patience} \
-                                                    ${fc1_neurons} \
-                                                    ${fc2_neurons} \
-                                                    ${dropout1_rate} \
-                                                    ${dropout2_rate} \
-                                                    ${kernel_size1} \
-                                                    ${kernel_size2} \
-                                                    ${kernel_size3}
+    python "${System.env.work_dir}"/scripts/main.py --work_dir ${work_dir} \
+                                                    --files_dir ${files_dir} \
+                                                    --training_set ${training_set} \
+                                                    --validation_set ${validation_set} \
+                                                    --testing_set ${testing_set} \
+                                                    --all_sets ${all_sets} \
+                                                    --batch_size ${batch_size} \
+                                                    --learning_rate ${learning_rate} \
+                                                    --patience ${patience} \
+                                                    --fc1_neurons ${fc1_neurons} \
+                                                    --fc2_neurons ${fc2_neurons} \
+                                                    --dropout1_rate ${dropout1_rate} \
+                                                    --dropout2_rate ${dropout2_rate} \
+                                                    --kernel_size1 ${kernel_size1} \
+                                                    --kernel_size2 ${kernel_size2} \
+                                                    --kernel_size3 ${kernel_size3}
     """
 }

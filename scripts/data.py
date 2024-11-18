@@ -28,7 +28,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from itertools import combinations
 import seaborn as sns
-import wandb
 
 
 def load_data(path, training_set, validation_set, testing_set, all_sets, device, batch_size):
