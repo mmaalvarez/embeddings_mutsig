@@ -1,0 +1,4 @@
+task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
+1	ee/72199b	27540875	nn_training (1)	FAILED	1	2024-11-19 12:45:58.711	43.5s	40s	-	-	-	-	-
+3	74/d0c37f	27540876	nn_training (3)	FAILED	1	2024-11-19 12:45:58.758	43.5s	40s	-	-	-	-	-
+6	f9/434f3f	27540869	nn_training (6)	FAILED	1	2024-11-19 12:45:58.316	43.9s	40s	-	-	-	-	-
