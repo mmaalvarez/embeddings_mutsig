@@ -1,6 +1,6 @@
 process nn_training {
 
-    label 'short_low'
+    label 'short_medium'
     
     // save output
     publishDir "$PWD/embeddings/CNN_models/", pattern: 'best_model_*.pth', mode: 'copy'

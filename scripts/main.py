@@ -84,17 +84,6 @@ if 'ipykernel' in sys.modules:
     kernel_size2 = 3
     kernel_size3 = 3
     
-    # also create output folders
-    
-    if not os.path.exists(f'{work_dir}/embeddings/CNN_models/'):
-        os.makedirs(f'{work_dir}/embeddings/CNN_models/')
-
-    if not os.path.exists(f'{work_dir}/embeddings/loss_auc_curves/'):
-        os.makedirs(f'{work_dir}/embeddings/loss_auc_curves/')
-    
-    if not os.path.exists(f'{work_dir}/embeddings/saved_embeddings_myCNN/'):
-        os.makedirs(f'{work_dir}/embeddings/saved_embeddings_myCNN/')
-    
 else:
     # otherwise, load arguments
     
@@ -183,7 +172,4 @@ model.load_state_dict(torch.load(model_path))
 # +
 # Save embeddings
 
-save_all_embeddings_probs(model, test_labels, test_sequences_og, label_mapping, f'{work_dir}/embeddings/saved_embeddings_myCNN/test_embeddings_probs_conv1_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.csv')
-# -
-
-
+save_all_embeddings_probs(model, test_labels, test_sequences_og, label_mapping, f'test_embeddings_probs_conv1_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.csv')

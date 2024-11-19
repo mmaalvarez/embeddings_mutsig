@@ -13,7 +13,6 @@ if [[ "$hostname" == "fsupeksvr" ]]; then
 	export partition_fast_short="normal_prio"
 	export partition_slow_long="normal_prio_lon"
 	export partition_slowest_unlimited="normal_prio_unli"
-	export project_group="agendas"
 
 elif [[ "$hostname" == "irblogin01" ]]; then
 
@@ -32,4 +31,4 @@ fi
 
 mkdir -p log/
 
-nextflow -log $PWD/log/nextflow.log run main.nf -resume -with-dag dag_flowchart.svg
+nextflow -log $PWD/log/nextflow.log run main.nf -resume

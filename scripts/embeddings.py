@@ -41,7 +41,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 #GET EMBEDDINGS WITH PROBABILITIES
-def get_embeddings_with_probs(model, sequences, batch_size=32):
+def get_embeddings_with_probs(model, sequences, batch_size):
     model.eval()
     all_embeddings = []
     all_probs = []
@@ -147,5 +147,3 @@ def save_all_embeddings_probs(model, labels, sequences, label_mapping, output_fi
     save_embeddings_csv_probs(sequences, labels, predicted_labels, embeddings, max_probabilities, label_mapping, output_file)
 
     print("SAVE ALL EMBEDDINGS FUNCTION CALLED CSV FUNCTION")
-
-

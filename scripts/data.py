@@ -126,5 +126,3 @@ def load_data(path, training_set, validation_set, testing_set, all_sets, device,
   )
   
   return train_loader, val_loader, test_loader, test_labels, test_sequences_og, class_weights_tensor, label_mapping
-
-

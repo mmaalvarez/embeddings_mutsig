@@ -236,10 +236,7 @@ def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, cl
     plt.grid(True)
 
     plt.tight_layout()
-    plt.savefig(f'{work_dir}/embeddings/loss_auc_curves/loss_and_accuracy_curve_2conv_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.png')  # Save the plot as an image file
+    plt.savefig(f'loss_and_accuracy_curve_2conv_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.png')  # Save the plot as an image file
     #plt.show()
 
     return model
-# -
-
-
