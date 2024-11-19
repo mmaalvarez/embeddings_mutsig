@@ -128,9 +128,9 @@ def save_embeddings_csv_probs(sequences, true_encoded_labels, predicted_encoded_
     print(f'Embeddings and probabilities saved to {output_file}')
 
 
-def save_all_embeddings_probs(model, labels, sequences, label_mapping, output_file):
+def save_all_embeddings_probs(model, labels, sequences, batch_size, label_mapping, output_file):
   
-    embeddings, probabilities, predicted_labels = get_embeddings_with_probs(model, sequences)
+    embeddings, probabilities, predicted_labels = get_embeddings_with_probs(model, sequences, batch_size)
 
     # Print the type of probabilities to check if it's a numpy array
     print(f'Type of probabilities: {type(probabilities)}')
