@@ -97,7 +97,6 @@ def calculate_accuracy(outputs, labels):
     return correct / labels.size(0)
 
 
-# +
 def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, class_weights_tensor, device,
                 training_set, 
                 validation_set, 
@@ -112,7 +111,11 @@ def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, cl
                 dropout2_rate,
                 kernel_size1,
                 kernel_size2,
-                kernel_size3):
+                kernel_size3,
+                train_perc, 
+                validation_perc, 
+                test_perc, 
+                subsetting_seed):
     print(config)
     # Initialize the model, loss function, and optimizer
     model = CNN_DNAClassifier(config, n_ct).to(device)  # Move model to GPU
@@ -184,16 +187,6 @@ def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, cl
         val_losses.append(avg_val_loss)
         val_accuracies.append(avg_val_accuracy)
 
-#        # Log metrics to wandb
-#         if wandb == True:
-#             wandb.log({
-#                 'epoch': epoch + 1,
-#                 'train_loss': avg_train_loss,
-#                 'val_loss': avg_val_loss,
-#                 'train_accuracy': avg_train_accuracy,
-#                 'val_accuracy': avg_val_accuracy
-#             })
-
         # Print train and validation loss/accuracy for the current epoch
         print(f'Epoch [{epoch + 1}/500], Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}, '
               f'Train Acc: {avg_train_accuracy:.4f}, Val Acc: {avg_val_accuracy:.4f}')
@@ -236,7 +229,7 @@ def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, cl
     plt.grid(True)
 
     plt.tight_layout()
-    plt.savefig(f'loss_and_accuracy_curve_2conv_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.png')  # Save the plot as an image file
+    plt.savefig(f'loss_and_accuracy_curve_2conv_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.png')  # Save the plot as an image file
     #plt.show()
 
     return model

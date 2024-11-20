@@ -24,6 +24,10 @@ process nn_training {
           val(kernel_size1),
           val(kernel_size2),
           val(kernel_size3)
+    val(training_perc)
+    val(validation_perc)
+    val(test_perc)
+    val(subsetting_seed)
 
     output:
     path('best_model_*.pth'), emit: CNN_models
@@ -46,6 +50,10 @@ process nn_training {
                                                     --dropout2_rate ${dropout2_rate} \
                                                     --kernel_size1 ${kernel_size1} \
                                                     --kernel_size2 ${kernel_size2} \
-                                                    --kernel_size3 ${kernel_size3}
+                                                    --kernel_size3 ${kernel_size3} \
+                                                    --training_perc ${training_perc} \
+                                                    --validation_perc ${validation_perc} \
+                                                    --test_perc ${test_perc} \
+                                                    --subsetting_seed ${subsetting_seed}
     """
 }

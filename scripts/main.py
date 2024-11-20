@@ -38,7 +38,7 @@ from types import SimpleNamespace
 
 # set the device to GPU if available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
+print(f'Using {device}\n')
 
 
 # +
@@ -60,6 +60,10 @@ parser.add_argument('--dropout2_rate', type=str, default=0.3)
 parser.add_argument('--kernel_size1', type=str, default=3)
 parser.add_argument('--kernel_size2', type=str, default=3)
 parser.add_argument('--kernel_size3', type=str, default=3)
+parser.add_argument('--training_perc', type=str, default=70)
+parser.add_argument('--validation_perc', type=str, default=15)
+parser.add_argument('--test_perc', type=str, default=15)
+parser.add_argument('--subsetting_seed', type=str, default=1)
 
 if 'ipykernel' in sys.modules:
     
@@ -83,6 +87,10 @@ if 'ipykernel' in sys.modules:
     kernel_size1 = 3
     kernel_size2 = 3
     kernel_size3 = 3
+    training_perc = 70
+    validation_perc = 15
+    test_perc = 15
+    subsetting_seed = 1
     
 else:
     # otherwise, load arguments
@@ -104,7 +112,10 @@ else:
     kernel_size1 = int(args.kernel_size1)
     kernel_size2 = int(args.kernel_size2)
     kernel_size3 = int(args.kernel_size3)
-
+    training_perc = int(args.training_perc)
+    validation_perc = int(args.validation_perc)
+    test_perc = int(args.test_perc)
+    subsetting_seed = int(args.subsetting_seed)
     
 # input files path
 path = f'{work_dir}{files_dir}'
@@ -127,6 +138,10 @@ train_loader, val_loader, test_loader, test_labels, test_sequences_og, class_wei
                                                                                                                        validation_set, 
                                                                                                                        testing_set, 
                                                                                                                        all_sets,
+                                                                                                                       train_perc, 
+                                                                                                                       validation_perc, 
+                                                                                                                       test_perc, 
+                                                                                                                       subsetting_seed,
                                                                                                                        device, 
                                                                                                                        batch_size)
 
@@ -138,7 +153,7 @@ n_ct = len(label_mapping)
 
 
 # +
-model_path = f'best_model_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.pth'
+model_path = f'best_model_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.pth'
 
 model = CNN_DNAClassifier(config, n_ct).to(device)
 
@@ -157,7 +172,11 @@ model = train_model(model_path, work_dir, config, n_ct, train_loader, val_loader
                     dropout2_rate,
                     kernel_size1,
                     kernel_size2,
-                    kernel_size3)
+                    kernel_size3,
+                    train_perc, 
+                    validation_perc, 
+                    test_perc, 
+                    subsetting_seed)
 
 print("Finished training")
 
@@ -172,4 +191,4 @@ model.load_state_dict(torch.load(model_path))
 # +
 # Save embeddings
 
-save_all_embeddings_probs(model, test_labels, test_sequences_og, batch_size, label_mapping, f'test_embeddings_probs_conv1_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}.csv')
+save_all_embeddings_probs(model, test_labels, test_sequences_og, batch_size, label_mapping, f'test_embeddings_probs_conv1_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.csv')

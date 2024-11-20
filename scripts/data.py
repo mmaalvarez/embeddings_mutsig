@@ -30,30 +30,30 @@ from itertools import combinations
 import seaborn as sns
 
 
-def load_data(path, training_set, validation_set, testing_set, all_sets, device, batch_size):
+def load_data(path, training_set, validation_set, testing_set, all_sets, train_perc, validation_perc, test_perc, subsetting_seed, device, batch_size):
 
   # Read data
-  train_df = pd.read_csv(path + training_set)
+  train_df = pd.read_csv(f'{path}/{training_set}_{train_perc}_seed_{subsetting_seed}')
+  val_df = pd.read_csv(f'{path}/{validation_set}_{validation_perc}_seed_{subsetting_seed}')
+  test_df = pd.read_csv(f'{path}/{testing_set}_{test_perc}_seed_{subsetting_seed}')
+  all_df = pd.read_csv(path + all_sets)
 
   #Train
   train_sequences = train_df['seq'].tolist()
   train_labels = train_df['label'].tolist()
   
   #Validate
-  val_df = pd.read_csv(path + validation_set)
   val_sequences = val_df['seq'].tolist()
   val_labels = val_df['label'].tolist()
   val_labels_og = val_df['label'].tolist()
   
   #Test
-  test_df = pd.read_csv(path + testing_set)
   test_sequences = test_df['seq'].tolist()
   test_sequences_og = test_df['seq'].tolist()
   test_labels = test_df['label'].tolist()
   test_labels_og = test_df['label'].tolist()
   
   #All
-  all_df = pd.read_csv(path + all_sets)
   all_sequences = all_df['seq'].tolist()
   all_labels = all_df['label'].tolist()
   
@@ -83,7 +83,7 @@ def load_data(path, training_set, validation_set, testing_set, all_sets, device,
   class_weights = total_count / (len(class_counts) * class_counts)  # Inverse frequency
   class_weights_tensor = torch.tensor(class_weights, dtype=torch.float32).to(device)
   
-  #Labels to device
+  # Labels to device
   train_labels = train_labels.to(device)
   val_labels = val_labels.to(device)
   test_labels = test_labels.to(device)
@@ -102,14 +102,12 @@ def load_data(path, training_set, validation_set, testing_set, all_sets, device,
           label = self.labels[idx]
           return sequence, label
   
-  
   # Create train DataLoaders
   train_loader = DataLoader(
       SequenceDataset(train_encoded_sequences, train_labels),
       batch_size=batch_size,
       shuffle=True
   )
-  
   
   # Create validation and test DataLoaders (no sampler, but shuffling is off)
   val_loader = DataLoader(

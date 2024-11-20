@@ -31,10 +31,11 @@
 ### Input Format
 - SNVs and flanking sequences per sample
 - Single k-mer size per experiment
-- Example for 15-mer context:
+- .csv (comma-delimited) files; "label"- and "seq"-named columns are mandatory, and other columns are ignored ; example for 2 SNVs in a 15-mer context (i.e. central nucleotide is the mutated locus):
 ```
-SNV1  chr1:2412434  TAGACGA(C>T)ACTGCAT
-SNV2  chr2:42342344 CGAGTGA(A>G)GCATAAG
+label,seq,SNV
+prost_radiotherapy,TAGACGATACTGCAT,C>T
+adeno_metastasis,CGAGTGAGGCATAAG,A>G
 ```
 
 ### Encoding

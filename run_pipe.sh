@@ -13,6 +13,7 @@ if [[ "$hostname" == "fsupeksvr" ]]; then
 	export partition_fast_short="normal_prio"
 	export partition_slow_long="normal_prio_lon"
 	export partition_slowest_unlimited="normal_prio_unli"
+	export project_group=""
 
 elif [[ "$hostname" == "irblogin01" ]]; then
 
@@ -22,7 +23,7 @@ elif [[ "$hostname" == "irblogin01" ]]; then
 	export partition_fast_short="irb_cpu_iclk"
 	export partition_slow_long="?"
 	export partition_slowest_unlimited="?"
-	export project_group="?"
+	export project_group=""
 
 else
 	echo "ERROR: HOSTNAME is not known: '`echo $HOSTNAME | cut -d"." -f1`'"

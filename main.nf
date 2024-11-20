@@ -40,7 +40,11 @@ workflow {
         params.validation_set,
         params.testing_set,
         params.all_sets,
-        combined_hyperparameters
+        combined_hyperparameters,
+        params.training_perc,
+        params.validation_perc,
+        params.test_perc,
+        params.subsetting_seed
     )
 }
 
