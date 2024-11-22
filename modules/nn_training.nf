@@ -4,8 +4,8 @@ process nn_training {
     
     // save output
     publishDir "$PWD/embeddings/CNN_models/", pattern: 'best_model_*.pth', mode: 'copy'
-    publishDir "$PWD/embeddings/loss_auc_curves/", pattern: 'loss_and_accuracy_curve_2conv_*.png', mode: 'copy'
-    publishDir "$PWD/embeddings/saved_embeddings_myCNN/", pattern: 'test_embeddings_probs_conv1_*.csv', mode: 'copy'    
+    publishDir "$PWD/embeddings/loss_auc_curves/", pattern: 'loss_and_accuracy_curve_*.png', mode: 'copy'
+    publishDir "$PWD/embeddings/saved_embeddings_myCNN/", pattern: 'test_embeddings_probs_*.csv', mode: 'copy'    
 
     input:
     val(work_dir)
@@ -17,13 +17,18 @@ process nn_training {
     tuple val(batch_size),
           val(learning_rate),
           val(patience),
+          val(kernel_size_conv1),
+          val(out_channels_conv1),
+          val(kernel_size_maxpool1),
+          val(kernel_stride_maxpool1),
+          val(kernel_size_conv2),
+          val(out_channels_conv2),
           val(fc1_neurons),
+          val(dropout_fc1),
           val(fc2_neurons),
-          val(dropout1_rate),
-          val(dropout2_rate),
-          val(kernel_size1),
-          val(kernel_size2),
-          val(kernel_size3)
+          val(dropout_fc2),
+          val(kmer)
+    val(epochs)
     val(training_perc)
     val(validation_perc)
     val(test_perc)
@@ -31,8 +36,8 @@ process nn_training {
 
     output:
     path('best_model_*.pth'), emit: CNN_models
-    path('loss_and_accuracy_curve_2conv_*.png'), emit: loss_auc_curves
-    path('test_embeddings_probs_conv1_*.csv'), emit: saved_embeddings_myCNN
+    path('loss_and_accuracy_curve_*.png'), emit: loss_auc_curves
+    path('test_embeddings_probs_*.csv'), emit: saved_embeddings_myCNN
 
     """
     python "${System.env.work_dir}"/scripts/main.py --work_dir ${work_dir} \
@@ -44,13 +49,18 @@ process nn_training {
                                                     --batch_size ${batch_size} \
                                                     --learning_rate ${learning_rate} \
                                                     --patience ${patience} \
+                                                    --kernel_size_conv1 ${kernel_size_conv1} \
+                                                    --out_channels_conv1 ${out_channels_conv1} \
+                                                    --kernel_size_maxpool1 ${kernel_size_maxpool1} \
+                                                    --kernel_stride_maxpool1 ${kernel_stride_maxpool1} \
+                                                    --kernel_size_conv2 ${kernel_size_conv2} \
+                                                    --out_channels_conv2 ${out_channels_conv2} \
                                                     --fc1_neurons ${fc1_neurons} \
+                                                    --dropout_fc1 ${dropout_fc1} \
                                                     --fc2_neurons ${fc2_neurons} \
-                                                    --dropout1_rate ${dropout1_rate} \
-                                                    --dropout2_rate ${dropout2_rate} \
-                                                    --kernel_size1 ${kernel_size1} \
-                                                    --kernel_size2 ${kernel_size2} \
-                                                    --kernel_size3 ${kernel_size3} \
+                                                    --dropout_fc2 ${dropout_fc2} \
+                                                    --epochs ${epochs} \
+                                                    --kmer ${kmer} \
                                                     --training_perc ${training_perc} \
                                                     --validation_perc ${validation_perc} \
                                                     --test_perc ${test_perc} \

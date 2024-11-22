@@ -53,13 +53,18 @@ parser.add_argument('--all_sets', type=str, required=True)
 parser.add_argument('--batch_size', type=str, default=256)
 parser.add_argument('--learning_rate', type=str, default=0.0008)
 parser.add_argument('--patience', type=str, default=20)
-parser.add_argument('--fc1_neurons', type=str, default=128)
-parser.add_argument('--fc2_neurons', type=str, default=128)
-parser.add_argument('--dropout1_rate', type=str, default=0.2)
-parser.add_argument('--dropout2_rate', type=str, default=0.3)
-parser.add_argument('--kernel_size1', type=str, default=3)
-parser.add_argument('--kernel_size2', type=str, default=3)
-parser.add_argument('--kernel_size3', type=str, default=3)
+parser.add_argument('--kernel_size_conv1', type=str, default=3)
+parser.add_argument('--out_channels_conv1', type=str, default=32)
+parser.add_argument('--kernel_size_maxpool1', type=str, default=2)
+parser.add_argument('--kernel_stride_maxpool1', type=str, default=2)
+parser.add_argument('--kernel_size_conv2', type=str, default=3)
+parser.add_argument('--out_channels_conv2', type=str, default=64)
+parser.add_argument('--fc1_neurons', type=str, default=64)
+parser.add_argument('--dropout_fc1', type=str, default=0.2)
+parser.add_argument('--fc2_neurons', type=str, default=64)
+parser.add_argument('--dropout_fc2', type=str, default=0.3)    
+parser.add_argument('--epochs', type=str, default=500)
+parser.add_argument('--kmer', type=str, default=3)
 parser.add_argument('--training_perc', type=str, default=70)
 parser.add_argument('--validation_perc', type=str, default=15)
 parser.add_argument('--test_perc', type=str, default=15)
@@ -70,23 +75,28 @@ if 'ipykernel' in sys.modules:
     # if interactive, pass values manually
 
     work_dir = '/home/jovyan/fsupek_data/users/malvarez/projects/embeddings_mutsig/'
-    files_dir = '/data/nn_input/test_patri/'
+    files_dir = '/data/nn_input/SNVs__kucab_zou_petljak_hwang/k-'
 
-    training_set = "all_cancertypes_df_train"
-    validation_set = "all_cancertypes_df_validate"
-    testing_set = "all_cancertypes_df_test"
-    all_sets = "all_cancertypes_df_all"
+    training_set = "SNVs__kucab_zou_petljak_hwang_train"
+    validation_set = "SNVs__kucab_zou_petljak_hwang_validate"
+    testing_set = "SNVs__kucab_zou_petljak_hwang_test"
+    all_sets = "SNVs__kucab_zou_petljak_hwang_all"
 
     batch_size = 256
     learning_rate = 0.0008
     patience = 20
-    fc1_neurons = 128
-    fc2_neurons = 128
-    dropout1_rate = 0.2
-    dropout2_rate = 0.3
-    kernel_size1 = 3
-    kernel_size2 = 3
-    kernel_size3 = 3
+    kernel_size_conv1 = 3
+    out_channels_conv1 = 32
+    kernel_size_maxpool1 = 3
+    kernel_stride_maxpool1 = 2
+    kernel_size_conv2 = 3
+    out_channels_conv2 = 64
+    fc1_neurons = 64
+    dropout_fc1 = 0.2
+    fc2_neurons = 64
+    dropout_fc2 = 0.3
+    epochs = 500
+    kmer = 3
     training_perc = 70
     validation_perc = 15
     test_perc = 15
@@ -105,31 +115,35 @@ else:
     batch_size = int(args.batch_size)
     learning_rate = float(args.learning_rate)
     patience = int(args.patience)
+    kernel_size_maxpool1 = int(args.kernel_size_maxpool1)
+    kernel_stride_maxpool1 = int(args.kernel_stride_maxpool1)
+    kernel_size_conv2 = int(args.kernel_size_conv2)
+    out_channels_conv2 = int(args.out_channels_conv2)
     fc1_neurons = int(args.fc1_neurons)
+    dropout_fc1 = float(args.dropout_fc1)
     fc2_neurons = int(args.fc2_neurons)
-    dropout1_rate = float(args.dropout1_rate)
-    dropout2_rate = float(args.dropout2_rate)
-    kernel_size1 = int(args.kernel_size1)
-    kernel_size2 = int(args.kernel_size2)
-    kernel_size3 = int(args.kernel_size3)
+    dropout_fc2 = float(args.dropout_fc2)
+    epochs = int(args.epochs)
+    kmer = int(args.kmer)
     training_perc = int(args.training_perc)
     validation_perc = int(args.validation_perc)
     test_perc = int(args.test_perc)
     subsetting_seed = int(args.subsetting_seed)
     
 # input files path
-path = f'{work_dir}{files_dir}'
+path = f'{work_dir}{files_dir}{kmer}'
 
 # define your config with dot notation access
 config = SimpleNamespace(learning_rate=learning_rate,
                          patience=patience,
+                         kernel_size_maxpool1=kernel_size_maxpool1,
+                         kernel_stride_maxpool1=kernel_stride_maxpool1,
+                         kernel_size_conv2=kernel_size_conv2,
+                         out_channels_conv2=out_channels_conv2,
                          fc1_neurons=fc1_neurons,
+                         dropout_fc1=dropout_fc1,
                          fc2_neurons=fc2_neurons,
-                         dropout1_rate=dropout1_rate,
-                         dropout2_rate=dropout2_rate,
-                         kernel_size1=kernel_size1,
-                         kernel_size2=kernel_size2,
-                         kernel_size3=kernel_size3)
+                         dropout_fc2=dropout_fc2)
 
 
 # +
@@ -138,7 +152,8 @@ train_loader, val_loader, test_loader, test_labels, test_sequences_og, class_wei
                                                                                                                        validation_set, 
                                                                                                                        testing_set, 
                                                                                                                        all_sets,
-                                                                                                                       train_perc, 
+                                                                                                                       kmer,
+                                                                                                                       training_perc, 
                                                                                                                        validation_perc, 
                                                                                                                        test_perc, 
                                                                                                                        subsetting_seed,
@@ -153,27 +168,19 @@ n_ct = len(label_mapping)
 
 
 # +
-model_path = f'best_model_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.pth'
+model_path = f'best_model_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_kernel1{kernel_size_conv1}_c1out{out_channels_conv1}_maxpool1k{kernel_size_maxpool1}_stride1{kernel_stride_maxpool1}_kernel2{kernel_size_conv2}_c2out{out_channels_conv2}_fc1{fc1_neurons}_dropout1{dropout_fc1}_fc2{fc2_neurons}_dropout2{dropout_fc2}_kmer{kmer}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.pth'
 
 model = CNN_DNAClassifier(config, n_ct).to(device)
 
 # Train the model normally (NO WANDB SWEEPS)
 model = train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, class_weights_tensor, device,
-                    training_set, 
-                    validation_set, 
-                    testing_set, 
                     all_sets,
                     batch_size,
                     learning_rate,
                     patience,
-                    fc1_neurons,
-                    fc2_neurons,
-                    dropout1_rate,
-                    dropout2_rate,
-                    kernel_size1,
-                    kernel_size2,
-                    kernel_size3,
-                    train_perc, 
+                    epochs,
+                    kmer,
+                    training_perc, 
                     validation_perc, 
                     test_perc, 
                     subsetting_seed)
@@ -191,4 +198,4 @@ model.load_state_dict(torch.load(model_path))
 # +
 # Save embeddings
 
-save_all_embeddings_probs(model, test_labels, test_sequences_og, batch_size, label_mapping, f'test_embeddings_probs_conv1_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.csv')
+save_all_embeddings_probs(model, test_labels, test_sequences_og, batch_size, label_mapping, f'test_embeddings_probs_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_kernel1{kernel_size_conv1}_c1out{out_channels_conv1}_maxpool1k{kernel_size_maxpool1}_stride1{kernel_stride_maxpool1}_kernel2{kernel_size_conv2}_c2out{out_channels_conv2}_fc1{fc1_neurons}_dropout1{dropout_fc1}_fc2{fc2_neurons}_dropout2{dropout_fc2}_kmer{kmer}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.csv')

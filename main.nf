@@ -12,24 +12,32 @@ workflow {
     batch_size = Channel.from(params.batch_size.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
     learning_rate = Channel.from(params.learning_rate.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
     patience = Channel.from(params.patience.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    kernel_size_conv1 = Channel.from(params.kernel_size_conv1.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    out_channels_conv1 = Channel.from(params.out_channels_conv1.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    kernel_size_maxpool1 = Channel.from(params.kernel_size_maxpool1.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    kernel_stride_maxpool1 = Channel.from(params.kernel_stride_maxpool1.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    kernel_size_conv2 = Channel.from(params.kernel_size_conv2.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    out_channels_conv2 = Channel.from(params.out_channels_conv2.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
     fc1_neurons = Channel.from(params.fc1_neurons.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    dropout_fc1 = Channel.from(params.dropout_fc1.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
     fc2_neurons = Channel.from(params.fc2_neurons.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
-    dropout1_rate = Channel.from(params.dropout1_rate.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
-    dropout2_rate = Channel.from(params.dropout2_rate.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
-    kernel_size1 = Channel.from(params.kernel_size1.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
-    kernel_size2 = Channel.from(params.kernel_size2.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
-    kernel_size3 = Channel.from(params.kernel_size3.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
-
+    dropout_fc2 = Channel.from(params.dropout_fc2.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    kmer = Channel.from(params.kmer.toString().replaceAll(/[\[\]\s]/, '').tokenize(','))
+    
     combined_hyperparameters = batch_size
         .combine(learning_rate)
         .combine(patience)
+        .combine(kernel_size_conv1)
+        .combine(out_channels_conv1)
+        .combine(kernel_size_maxpool1)
+        .combine(kernel_stride_maxpool1)
+        .combine(kernel_size_conv2)
+        .combine(out_channels_conv2)
         .combine(fc1_neurons)
+        .combine(dropout_fc1)
         .combine(fc2_neurons)
-        .combine(dropout1_rate)
-        .combine(dropout2_rate)
-        .combine(kernel_size1)
-        .combine(kernel_size2)
-        .combine(kernel_size3)
+        .combine(dropout_fc2)
+        .combine(kmer)
 
     // Run processes
     
@@ -41,6 +49,7 @@ workflow {
         params.testing_set,
         params.all_sets,
         combined_hyperparameters,
+        params.epochs,
         params.training_perc,
         params.validation_perc,
         params.test_perc,

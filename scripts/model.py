@@ -50,15 +50,15 @@ class CNN_DNAClassifier(nn.Module):
         super(CNN_DNAClassifier, self).__init__()
 
         # Conv Layers
-        self.conv1 = nn.Conv1d(in_channels=4, out_channels=32, kernel_size=config.kernel_size1, padding=int((config.kernel_size1-1)/2))
-        self.pool = nn.MaxPool1d(kernel_size=2, stride=2)
-        self.conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=config.kernel_size2, padding=int((config.kernel_size2-1)/2))
+        self.conv1 = nn.Conv1d(in_channels=4, out_channels=config.out_channels_conv1, kernel_size=config.kernel_size_conv1, padding=int((config.kernel_size_conv1-1)/2))
+        self.pool1 = nn.MaxPool1d(kernel_size=config.kernel_size_maxpool1, stride=config.kernel_stride_maxpool1)
+        self.conv2 = nn.Conv1d(in_channels=config.out_channels_conv1, out_channels=config.out_channels_conv2, kernel_size=config.kernel_size_conv2, padding=int((config.kernel_size_conv2-1)/2))
         
         # Use config values for fully connected layers
-        self.fc1 = nn.Linear(64 * 10, config.fc1_neurons)
-        self.dropout1 = nn.Dropout(config.dropout1_rate)
+        self.fc1 = nn.Linear(config.out_channels_conv2 * 10, config.fc1_neurons)
+        self.dropout_fc1 = nn.Dropout(config.dropout_fc1)
         self.fc2 = nn.Linear(config.fc1_neurons, config.fc2_neurons)
-        self.dropout2 = nn.Dropout(config.dropout2_rate)
+        self.dropout_fc2 = nn.Dropout(config.dropout_fc2)
         self.fc3 = nn.Linear(config.fc2_neurons, n_ct)
 
     def forward(self, x):
@@ -69,15 +69,15 @@ class CNN_DNAClassifier(nn.Module):
         conv1_out_pooled = torch.mean(conv1_out, dim=2) 
 
         x = torch.relu(self.conv1(x))
-        x = self.pool(x)
+        x = self.pool1(x)
         x = torch.relu(self.conv2(x))
-        x = self.pool(x)
+        x = self.pool1(x)
         
         x = x.view(x.size(0), -1)
         x = torch.relu(self.fc1(x))
-        x = self.dropout1(x)
+        x = self.dropout_fc1(x)
         embedding = torch.relu(self.fc2(x))
-        embedding = self.dropout2(embedding)
+        embedding = self.dropout_fc2(embedding)
         x = self.fc3(embedding)
         
         return x, embedding
@@ -98,21 +98,13 @@ def calculate_accuracy(outputs, labels):
 
 
 def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, class_weights_tensor, device,
-                training_set, 
-                validation_set, 
-                testing_set, 
                 all_sets,
                 batch_size,
                 learning_rate,
                 patience,
-                fc1_neurons,
-                fc2_neurons,
-                dropout1_rate,
-                dropout2_rate,
-                kernel_size1,
-                kernel_size2,
-                kernel_size3,
-                train_perc, 
+                epochs,
+                kmer,
+                training_perc, 
                 validation_perc, 
                 test_perc, 
                 subsetting_seed):
@@ -132,7 +124,7 @@ def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, cl
     val_accuracies = []
 
     # Training loop
-    for epoch in range(500):
+    for epoch in range(epochs):
         model.train()  # Set the model to training mode
         batch_train_losses = []
         batch_train_accuracies = []
@@ -229,7 +221,8 @@ def train_model(model_path, work_dir, config, n_ct, train_loader, val_loader, cl
     plt.grid(True)
 
     plt.tight_layout()
-    plt.savefig(f'loss_and_accuracy_curve_2conv_{training_set}_{validation_set}_{testing_set}_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_fc1{fc1_neurons}_fc2{fc2_neurons}_dropout1{dropout1_rate}_dropout2{dropout2_rate}_kernel1{kernel_size1}_kernel2{kernel_size2}_kernel3{kernel_size3}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.png')  # Save the plot as an image file
+    # Save the plot as an image file
+    plt.savefig(f'loss_and_accuracy_curve_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_kernel1{config.kernel_size_conv1}_c1out{config.out_channels_conv1}_maxpool1k{config.kernel_size_maxpool1}_stride1{config.kernel_stride_maxpool1}_kernel2{config.kernel_size_conv2}_c2out{config.out_channels_conv2}_fc1{config.fc1_neurons}_dropout1{config.dropout_fc1}_fc2{config.fc2_neurons}_dropout2{config.dropout_fc2}_kmer{kmer}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.png')
     #plt.show()
 
     return model

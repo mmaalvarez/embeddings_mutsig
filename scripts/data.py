@@ -30,13 +30,13 @@ from itertools import combinations
 import seaborn as sns
 
 
-def load_data(path, training_set, validation_set, testing_set, all_sets, train_perc, validation_perc, test_perc, subsetting_seed, device, batch_size):
+def load_data(path, training_set, validation_set, testing_set, all_sets, kmer, training_perc, validation_perc, test_perc, subsetting_seed, device, batch_size):
 
   # Read data
-  train_df = pd.read_csv(f'{path}/{training_set}_{train_perc}_seed_{subsetting_seed}')
+  train_df = pd.read_csv(f'{path}/{training_set}_{training_perc}_seed_{subsetting_seed}')
   val_df = pd.read_csv(f'{path}/{validation_set}_{validation_perc}_seed_{subsetting_seed}')
   test_df = pd.read_csv(f'{path}/{testing_set}_{test_perc}_seed_{subsetting_seed}')
-  all_df = pd.read_csv(path + all_sets)
+  all_df = pd.read_csv(f'{path}/{all_sets}')
 
   #Train
   train_sequences = train_df['seq'].tolist()
