@@ -1,6 +1,11 @@
 process nn_training {
 
-    label 'short_high'
+    time = { "${params.hours_training} h" }
+    memory = { "${params.GB_training + 2*(task.attempt-1)} GB" }
+    queue = { "${params.partition_fast_short}" }
+    cpus = 1
+    errorStrategy = 'retry'
+    maxRetries = 1
     
     // save output
     publishDir "$PWD/embeddings/CNN_models/", pattern: 'best_model_*.pth', mode: 'copy'

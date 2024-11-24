@@ -3,12 +3,12 @@
 ## Network Architecture
 ### Layer Structure
 - **Convolutional Layers**
-  - Conv1: 32 output channels
-  - Conv2: 64 output channels
+  - Conv1
+  - Conv2
 
 - **Fully Connected Layers**
-  - FC1: 128 neurons
-  - FC2: 128 neurons 
+  - FC1
+  - FC2 
   - Output: matches number of classes
 
 ### Components
@@ -17,14 +17,10 @@
   - Softmax for final output
 
 - **Regularization**
-  - Dropout1: 0.2 rate
-  - Dropout2: 0.3 rate
-
-### Training Parameters
-- Batch size: 256
-- Learning rate: 0.0008
-- Early stopping patience: 20
-- Validation and test sets implemented
+  - Dropout in FC1
+  - Dropout in FC2
+  - Early stopping patience
+  - Validation and test sets implemented
 
 ## Data Processing
 
@@ -37,6 +33,7 @@ label,seq,SNV
 prost_radiotherapy,TAGACGATACTGCAT,C>T
 adeno_metastasis,CGAGTGAGGCATAAG,A>G
 ```
+- NOTE: The minimum k-mer length should usually be 9-mer, unless the convolutional layers' kernels and strides are set small enough (1-2)
 
 ### Encoding
 - One-hot encoding for sequences

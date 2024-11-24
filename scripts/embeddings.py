@@ -49,8 +49,8 @@ def get_embeddings_with_probs(model, sequences, batch_size):
 
     with torch.no_grad():
         for i in range(0, len(sequences), batch_size):
-            print("BATCH:")
-            print(str(i))
+            #print("BATCH:")
+            #print(str(i))
             batch_sequences = sequences[i:i + batch_size]
             outputs, embeddings = model(one_hot_encode_dna(batch_sequences).to(device))
             probs = torch.softmax(outputs, dim=1)  # Probabilities
