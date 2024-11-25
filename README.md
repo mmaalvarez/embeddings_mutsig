@@ -32,7 +32,7 @@
 
 ### Input Format
 - SNVs and flanking sequences per sample
-- Single k-mer size per experiment
+- Single k-mer size per experiment; odd values (WARNING: 3-mer would require kernel_size_* == 1)
 - .csv (comma-delimited) files; "label"- and "seq"-named columns are mandatory, and other columns are ignored ; example for 2 SNVs in a 15-mer context (i.e. central nucleotide is the mutated locus):
 ```
 label,seq,SNV

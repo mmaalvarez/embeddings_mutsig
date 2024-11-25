@@ -49,35 +49,40 @@ class CNN_DNAClassifier(nn.Module):
 
         super(CNN_DNAClassifier, self).__init__()
 
-        ## Conv Layers
+        # ensure kmer size is odd and ≥ 5, and kernel sizes for convolutional layers are odd as well
+        assert config.kmer >= 5 and config.kmer % 2 == 1, "ERROR: k-mer size must be odd and >= 5"
+        assert config.kernel_size_conv1 % 2 == 1, "ERROR: kernel size for convolutional layer 1 is an even integer, must be odd"
+        assert config.kernel_size_conv2 % 2 == 1, "ERROR: kernel size for convolutional layer 2 is an even integer, must be odd"
+        
+        ## conv Layers
         # in_channels=4 because there are 4 possible bases (A: [1 0 0 0] ; C: [0 1 0 0] ; G: [0 0 1 0] ; T: [0 0 0 1])
         self.conv1 = nn.Conv1d(in_channels=4, 
                                out_channels=config.out_channels_conv1, 
                                kernel_size=config.kernel_size_conv1, 
                                # default stride is 1
                                stride = 1,
-                               padding=int((config.kernel_size_conv1-1)/2))
-        
-        self.pool1 = nn.MaxPool1d(kernel_size=config.kernel_size_maxpool1,
-                                  # same stride as the size
-                                  stride=config.kernel_size_maxpool1)
+                               # use 'same' padding to maintain input size (==k-mer)
+                               padding = int((config.kernel_size_conv1-1)/2))
         
         self.conv2 = nn.Conv1d(in_channels=config.out_channels_conv1,
                                out_channels=config.out_channels_conv2, 
                                kernel_size=config.kernel_size_conv2, 
-                               # default stride is 1
                                stride = 1,
-                               padding=int((config.kernel_size_conv2-1)/2))
+                               padding = int((config.kernel_size_conv2-1)/2))
         
-        # Calculate output size after convolutions and pooling
+        # Maxpool applied after each convolutional layer
+        self.pool = nn.MaxPool1d(kernel_size=config.kernel_size_maxpool,
+                                 # same stride as the size
+                                 stride=config.kernel_size_maxpool)
+        
+        # Calculate final flattened size after convolutions and pooling
         L_in = config.kmer
         L_conv1 = L_in + 2*int((config.kernel_size_conv1-1)/2) - config.kernel_size_conv1 + 1
-        L_pool1 = ((L_conv1 - config.kernel_size_maxpool1) // config.kernel_size_maxpool1) + 1
+        L_pool1 = ((L_conv1 - config.kernel_size_maxpool) // config.kernel_size_maxpool) + 1
         L_conv2 = L_pool1 + 2*int((config.kernel_size_conv2-1)/2) - config.kernel_size_conv2 + 1
-        L_pool2 = ((L_conv2 - config.kernel_size_maxpool1) // config.kernel_size_maxpool1) + 1
-        # Calculate final flattened size
+        L_pool2 = ((L_conv2 - config.kernel_size_maxpool) // config.kernel_size_maxpool) + 1
         flatten_size = config.out_channels_conv2 * L_pool2
-        
+
         ## fully connected layers
         self.fc1 = nn.Linear(flatten_size, config.fc1_neurons)
         self.dropout_fc1 = nn.Dropout(config.dropout_fc1)
@@ -92,12 +97,12 @@ class CNN_DNAClassifier(nn.Module):
         # first convolution
         x = self.conv1(x)
         x = torch.relu(x)
-        x = self.pool1(x)
+        x = self.pool(x)
         
         # second convolution
         x = self.conv2(x)
         x = torch.relu(x)
-        x = self.pool1(x)
+        x = self.pool(x)
         
         # Flatten the output for the fully connected layers
         batch_size = x.size(0)
@@ -214,7 +219,7 @@ def train_model(best_model_path, work_dir, config, n_ct, train_loader, val_loade
         val_accuracies.append(avg_val_accuracy)
 
         # Print train and validation loss/accuracy for the current epoch
-        print(f'Epoch [{epoch + 1}/epochs], Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}, '
+        print(f'Epoch [{epoch + 1}/{epochs}], Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}, '
               f'Train Acc: {avg_train_accuracy:.4f}, Val Acc: {avg_val_accuracy:.4f}')
 
         # Early stopping check
@@ -256,7 +261,7 @@ def train_model(best_model_path, work_dir, config, n_ct, train_loader, val_loade
 
     plt.tight_layout()
     # Save the plot as an image file
-    plt.savefig(f'loss_and_accuracy_curve_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_c1kernel{config.kernel_size_conv1}_c1out{config.out_channels_conv1}_mp1kernel{config.kernel_size_maxpool1}_c2kernel{config.kernel_size_conv2}_c2out{config.out_channels_conv2}_fc1neu{config.fc1_neurons}_fc1dropout{config.dropout_fc1}_fc2neu{config.fc2_neurons}_fc2dropout{config.dropout_fc2}_kmer{config.kmer}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.png')
+    plt.savefig(f'loss_and_accuracy_curve_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_c1kernel{config.kernel_size_conv1}_c1out{config.out_channels_conv1}_maxpool{config.kernel_size_maxpool}_c2kernel{config.kernel_size_conv2}_c2out{config.out_channels_conv2}_fc1neu{config.fc1_neurons}_fc1dropout{config.dropout_fc1}_fc2neu{config.fc2_neurons}_fc2dropout{config.dropout_fc2}_kmer{config.kmer}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.png')
     #plt.show()
 
     return model

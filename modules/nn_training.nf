@@ -24,9 +24,9 @@ process nn_training {
           val(patience),
           val(kernel_size_conv1),
           val(out_channels_conv1),
-          val(kernel_size_maxpool1),
           val(kernel_size_conv2),
           val(out_channels_conv2),
+          val(kernel_size_maxpool),          
           val(fc1_neurons),
           val(dropout_fc1),
           val(fc2_neurons),
@@ -55,9 +55,9 @@ process nn_training {
                                                     --patience ${patience} \
                                                     --kernel_size_conv1 ${kernel_size_conv1} \
                                                     --out_channels_conv1 ${out_channels_conv1} \
-                                                    --kernel_size_maxpool1 ${kernel_size_maxpool1} \
                                                     --kernel_size_conv2 ${kernel_size_conv2} \
                                                     --out_channels_conv2 ${out_channels_conv2} \
+                                                    --kernel_size_maxpool ${kernel_size_maxpool} \
                                                     --fc1_neurons ${fc1_neurons} \
                                                     --dropout_fc1 ${dropout_fc1} \
                                                     --fc2_neurons ${fc2_neurons} \
