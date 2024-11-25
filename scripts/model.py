@@ -72,9 +72,9 @@ class CNN_DNAClassifier(nn.Module):
         # Calculate output size after convolutions and pooling
         L_in = config.kmer
         L_conv1 = L_in + 2*int((config.kernel_size_conv1-1)/2) - config.kernel_size_conv1 + 1
-        L_pool1 = ((L_conv1 - config.kernel_size_maxpool1) // config.kernel_stride_maxpool1) + 1
+        L_pool1 = ((L_conv1 - config.kernel_size_maxpool1) // config.kernel_size_maxpool1) + 1
         L_conv2 = L_pool1 + 2*int((config.kernel_size_conv2-1)/2) - config.kernel_size_conv2 + 1
-        L_pool2 = ((L_conv2 - config.kernel_size_maxpool1) // config.kernel_stride_maxpool1) + 1
+        L_pool2 = ((L_conv2 - config.kernel_size_maxpool1) // config.kernel_size_maxpool1) + 1
         # Calculate final flattened size
         flatten_size = config.out_channels_conv2 * L_pool2
         
