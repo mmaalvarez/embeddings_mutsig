@@ -2,7 +2,7 @@ process nn_training {
 
     time = { "${params.hours_training} h" }
     memory = { "${params.GB_training + 2*(task.attempt-1)} GB" }
-    queue = { "${params.partition_fast_short}" }
+    queue = { "${params.partition_training}" }
     cpus = 1
     errorStrategy = 'retry'
     maxRetries = 1
@@ -25,7 +25,6 @@ process nn_training {
           val(kernel_size_conv1),
           val(out_channels_conv1),
           val(kernel_size_maxpool1),
-          val(kernel_stride_maxpool1),
           val(kernel_size_conv2),
           val(out_channels_conv2),
           val(fc1_neurons),
@@ -57,7 +56,6 @@ process nn_training {
                                                     --kernel_size_conv1 ${kernel_size_conv1} \
                                                     --out_channels_conv1 ${out_channels_conv1} \
                                                     --kernel_size_maxpool1 ${kernel_size_maxpool1} \
-                                                    --kernel_stride_maxpool1 ${kernel_stride_maxpool1} \
                                                     --kernel_size_conv2 ${kernel_size_conv2} \
                                                     --out_channels_conv2 ${out_channels_conv2} \
                                                     --fc1_neurons ${fc1_neurons} \

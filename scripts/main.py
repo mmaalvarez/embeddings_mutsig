@@ -56,7 +56,6 @@ parser.add_argument('--patience', type=str, default=20)
 parser.add_argument('--kernel_size_conv1', type=str, default=3)
 parser.add_argument('--out_channels_conv1', type=str, default=32)
 parser.add_argument('--kernel_size_maxpool1', type=str, default=2)
-parser.add_argument('--kernel_stride_maxpool1', type=str, default=2)
 parser.add_argument('--kernel_size_conv2', type=str, default=3)
 parser.add_argument('--out_channels_conv2', type=str, default=64)
 parser.add_argument('--fc1_neurons', type=str, default=64)
@@ -82,19 +81,18 @@ if 'ipykernel' in sys.modules:
     testing_set = "SNVs__kucab_zou_petljak_hwang_test"
     all_sets = "SNVs__kucab_zou_petljak_hwang_all"
 
-    batch_size = 256
+    batch_size = 512
     learning_rate = 0.0008
     patience = 20
     kernel_size_conv1 = 3
     out_channels_conv1 = 32
-    kernel_size_maxpool1 = 3
-    kernel_stride_maxpool1 = 2
+    kernel_size_maxpool1 = 2
     kernel_size_conv2 = 3
     out_channels_conv2 = 64
-    fc1_neurons = 64
-    dropout_fc1 = 0.2
-    fc2_neurons = 64
-    dropout_fc2 = 0.3
+    fc1_neurons = 256
+    dropout_fc1 = 0.5
+    fc2_neurons = 16
+    dropout_fc2 = 0.4
     epochs = 500
     kmer = 9
     training_perc = 70
@@ -118,7 +116,6 @@ else:
     kernel_size_conv1 = int(args.kernel_size_conv1)
     out_channels_conv1 = int(args.out_channels_conv1)
     kernel_size_maxpool1 = int(args.kernel_size_maxpool1)
-    kernel_stride_maxpool1 = int(args.kernel_stride_maxpool1)
     kernel_size_conv2 = int(args.kernel_size_conv2)
     out_channels_conv2 = int(args.out_channels_conv2)
     fc1_neurons = int(args.fc1_neurons)
@@ -141,7 +138,6 @@ config = SimpleNamespace(learning_rate=learning_rate,
                          kernel_size_conv1=kernel_size_conv1,
                          out_channels_conv1=out_channels_conv1,
                          kernel_size_maxpool1=kernel_size_maxpool1,
-                         kernel_stride_maxpool1=kernel_stride_maxpool1,
                          kernel_size_conv2=kernel_size_conv2,
                          out_channels_conv2=out_channels_conv2,
                          fc1_neurons=fc1_neurons,
@@ -174,7 +170,7 @@ n_ct = len(label_mapping)
 
 # +
 # create path to store the best model from training
-best_model_path = f'best_model_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_kernel1{kernel_size_conv1}_c1out{out_channels_conv1}_maxpool1k{kernel_size_maxpool1}_stride1{kernel_stride_maxpool1}_kernel2{kernel_size_conv2}_c2out{out_channels_conv2}_fc1{fc1_neurons}_dropout1{dropout_fc1}_fc2{fc2_neurons}_dropout2{dropout_fc2}_kmer{kmer}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.pth'
+best_model_path = f'best_model_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_c1kernel{kernel_size_conv1}_c1out{out_channels_conv1}_mp1kernel{kernel_size_maxpool1}_c2kernel{kernel_size_conv2}_c2out{out_channels_conv2}_fc1neu{fc1_neurons}_fc1dropout{dropout_fc1}_fc2neu{fc2_neurons}_fc2dropout{dropout_fc2}_kmer{kmer}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.pth'
 
 # Train the model normally (NO WANDB SWEEPS)
 model = train_model(best_model_path, work_dir, config, n_ct, train_loader, val_loader, class_weights_tensor, device,
@@ -198,8 +194,4 @@ print("Loading model...")
 model.load_state_dict(torch.load(best_model_path))
 
 # ...to use it for generating embeddings (and save them)
-save_all_embeddings_probs(model, test_labels, test_sequences_og, batch_size, label_mapping, f'test_embeddings_probs_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_kernel1{kernel_size_conv1}_c1out{out_channels_conv1}_maxpool1k{kernel_size_maxpool1}_stride1{kernel_stride_maxpool1}_kernel2{kernel_size_conv2}_c2out{out_channels_conv2}_fc1{fc1_neurons}_dropout1{dropout_fc1}_fc2{fc2_neurons}_dropout2{dropout_fc2}_kmer{kmer}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.csv')
-
-# -
-
-
+save_all_embeddings_probs(model, test_labels, test_sequences_og, batch_size, label_mapping, f'test_embeddings_probs_{all_sets}_batch_size{batch_size}_learning_rate{learning_rate}_patience{patience}_c1kernel{kernel_size_conv1}_c1out{out_channels_conv1}_mp1kernel{kernel_size_maxpool1}_c2kernel{kernel_size_conv2}_c2out{out_channels_conv2}_fc1neu{fc1_neurons}_fc1dropout{dropout_fc1}_fc2neu{fc2_neurons}_fc2dropout{dropout_fc2}_kmer{kmer}_training{training_perc}_validation{validation_perc}_test{test_perc}_subsetting_seed{subsetting_seed}.csv')

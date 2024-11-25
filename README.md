@@ -1,5 +1,7 @@
 # Mutational Signatures Extraction with Neural Network Embeddings
 
+# Inspired by use of embeddings in Yaacov et al. 2024 doi.org/10.1016/j.xcrm.2024.101608
+
 ## Network Architecture
 ### Layer Structure
 - **Convolutional Layers**
@@ -8,13 +10,17 @@
 
 - **Fully Connected Layers**
   - FC1
-  - FC2 
+  - FC2 --> Embeddings (signature exposures) are the output of FC2 (after ReLU and dropout)
   - Output: matches number of classes
 
 ### Components
 - **Activation Functions**
-  - ReLU after convolutions and FC1
-  - Softmax for final output
+  - ReLU applied to all convolutional and fully connected layers
+  - Softmax applied to Output
+
+- **Optimization**
+  - Cross-entropy to get loss
+  - Adam optimizer
 
 - **Regularization**
   - Dropout in FC1
@@ -33,7 +39,6 @@ label,seq,SNV
 prost_radiotherapy,TAGACGATACTGCAT,C>T
 adeno_metastasis,CGAGTGAGGCATAAG,A>G
 ```
-- NOTE: The minimum k-mer length should usually be 9-mer, unless the convolutional layers' kernels and strides are set small enough (1-2)
 
 ### Encoding
 - One-hot encoding for sequences
@@ -45,8 +50,7 @@ adeno_metastasis,CGAGTGAGGCATAAG,A>G
 - Loss: Cross-entropy with softmax activation
 
 ## Signature Analysis
-- FC1 layer (128 neurons) represents signature exposures
-- Test different FC1 sizes: [4,8,16,32,64,128]
+- Test different k-mers (input sequence length) and FC2 sizes (i.e. K signatures)
 - Map signatures to motifs by analyzing embedding changes
 
 ## Installation
