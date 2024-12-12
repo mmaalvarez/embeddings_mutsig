@@ -32,4 +32,4 @@ fi
 
 mkdir -p log/
 
-nextflow -log $PWD/log/nextflow.log run main.nf -resume
+nextflow -log $PWD/log/nextflow.log run main.nf -resume #-stub

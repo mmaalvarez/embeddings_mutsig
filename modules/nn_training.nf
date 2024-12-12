@@ -43,6 +43,7 @@ process nn_training {
     path('loss_and_accuracy_curve_*.png'), emit: loss_auc_curves
     path('test_embeddings_probs_*.csv'), emit: saved_embeddings_myCNN
 
+    script:
     """
     python "${System.env.work_dir}"/scripts/main.py --work_dir ${work_dir} \
                                                     --files_dir ${files_dir} \
@@ -68,5 +69,12 @@ process nn_training {
                                                     --validation_perc ${validation_perc} \
                                                     --test_perc ${test_perc} \
                                                     --subsetting_seed ${subsetting_seed}
+    """
+
+    stub:
+    """
+    touch best_model_STUB.pth
+    touch loss_and_accuracy_curve_STUB.png
+    touch test_embeddings_probs_STUB.csv
     """
 }
