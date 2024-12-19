@@ -81,10 +81,10 @@ class CNN_DNAClassifier(nn.Module):
         
         # Calculate final flattened size after convolutions and pooling
         L_in = config.kmer
-        L_conv1 = L_in + 2*int((config.kernel_size_conv1-1)/2) - config.kernel_size_conv1 + 1
-        L_pool1 = ((L_conv1 - config.kernel_size_maxpool) // config.kernel_size_maxpool) + 1
-        L_conv2 = L_pool1 + 2*int((config.kernel_size_conv2-1)/2) - config.kernel_size_conv2 + 1
-        L_pool2 = ((L_conv2 - config.kernel_size_maxpool) // config.kernel_size_maxpool) + 1
+        L_conv1 = L_in + 2 * int((config.kernel_size_conv1 - 1) / 2) - config.kernel_size_conv1 + 1
+        L_pool1 = (L_conv1 + config.kernel_size_maxpool - 1) // config.kernel_size_maxpool if ceil_mode else (L_conv1 - config.kernel_size_maxpool) // config.kernel_size_maxpool + 1
+        L_conv2 = L_pool1 + 2 * int((config.kernel_size_conv2 - 1) / 2) - config.kernel_size_conv2 + 1
+        L_pool2 = (L_conv2 + config.kernel_size_maxpool - 1) // config.kernel_size_maxpool if ceil_mode else (L_conv2 - config.kernel_size_maxpool) // config.kernel_size_maxpool + 1
         flatten_size = config.out_channels_conv2 * L_pool2
 
         ## fully connected layers
