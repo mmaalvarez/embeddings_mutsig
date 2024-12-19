@@ -49,8 +49,8 @@ class CNN_DNAClassifier(nn.Module):
 
         super(CNN_DNAClassifier, self).__init__()
 
-        # ensure kmer size is odd and ≥ 5, and kernel sizes for convolutional layers are odd as well
-        assert config.kmer >= 5 and config.kmer % 2 == 1, "ERROR: k-mer size must be odd and >= 5"
+        # ensure kmer size and convolutional layers are odd values
+        assert config.kmer % 2 == 1, "ERROR: k-mer size is an even number, it must be odd"
         assert config.kernel_size_conv1 % 2 == 1, "ERROR: kernel size for convolutional layer 1 is an even integer, must be odd"
         assert config.kernel_size_conv2 % 2 == 1, "ERROR: kernel size for convolutional layer 2 is an even integer, must be odd"
         
@@ -70,10 +70,14 @@ class CNN_DNAClassifier(nn.Module):
                                stride = 1,
                                padding = int((config.kernel_size_conv2-1)/2))
         
+        # Determine whether to use ceil_mode based on kmer value (i.e. only if kmer==3, to avoid rounding down to 0 after maxpooling)
+        ceil_mode = config.kmer == 3
+        
         # Maxpool applied after each convolutional layer
         self.pool = nn.MaxPool1d(kernel_size=config.kernel_size_maxpool,
                                  # same stride as the size
-                                 stride=config.kernel_size_maxpool)
+                                 stride=config.kernel_size_maxpool,
+                                 ceil_mode=ceil_mode)
         
         # Calculate final flattened size after convolutions and pooling
         L_in = config.kmer
