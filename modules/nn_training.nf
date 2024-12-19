@@ -1,7 +1,7 @@
 process nn_training {
 
     time = { "${params.hours_training} h" }
-    memory = { "${params.GB_training + 2*(task.attempt-1)} GB" }
+    memory = { "${params.GB_training + 10*(task.attempt-1)} GB" }
     queue = { "${params.partition_training}" }
     cpus = 1
     errorStrategy = 'retry'
